@@ -1,0 +1,103 @@
+.upload-box {
+    border: 2px dashed #0d6efd;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100%;
+    min-height: 150px;
+    height: auto;
+}
+
+.upload-box:hover {
+    background-color: #e9f2ff;
+    border-color: #007bff;
+}
+
+.upload-box i {
+    font-size: 28px;
+    color: #0d6efd;
+    margin-bottom: 8px;
+}
+
+.upload-box span {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+#formFileLg {
+    display: none;
+}
+
+#preview {
+    display: none;
+    width: auto;
+    max-width: 200px;
+    max-height: 250px;
+    margin-bottom: 8px;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    transition: 0.3s;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+    box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.25) !important;
+}
+
+.accordion-button {
+    font-weight: 600;
+    color: #344767;
+    border-radius: 0.5rem !important;
+    transition: all 0.3s ease;
+}
+
+
+.accordion-button:not(.collapsed) {
+    color: #fff !important;
+    font-weight: 600 !important;
+    background: linear-gradient(90deg, #ffba00 0%, #ff6c00 100%);
+    box-shadow: 0 2px 8px rgba(50, 50, 93, .1);
+    border-radius: 0.5rem 0.5rem 0 0 !important;
+}
+
+
+.accordion-header {
+    border-radius: 0.5rem !important;
+    overflow: hidden;
+}
+
+
+.accordion-item {
+    border: none;
+    border-radius: 0.5rem !important;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1rem;
+}
+
+
+.accordion-body {
+    background-color: #f8f9fa;
+    border-radius: 0 0 0.5rem 0.5rem !important;
+    padding: 2rem;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+}
+
+
+.accordion-collapse {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+
+.accordion-button i.ni {
+    color: #000 !important;
+    margin-left: 20px;
+}

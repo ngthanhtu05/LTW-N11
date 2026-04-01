@@ -1,0 +1,13 @@
+services:
+  app:
+    image: lazy247/sportshop-app:latest
+
+    container_name: sportshop-app-prod
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:mysql://192.168.10.206:3306/sportshop'
+      SPRING_DATASOURCE_USERNAME: 'sportshop'
+      SPRING_DATASOURCE_PASSWORD: '123456'
+      VNPAY_RETURN_URL: 'http://192.168.10.205:8080/order/payment-return'
+      SPRING_AUTOCONFIGURE_EXCLUDE: 'org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration'
