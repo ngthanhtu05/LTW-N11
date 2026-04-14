@@ -16,6 +16,8 @@ import java.util.TimeZone;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.n11.sportshop.repository.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +38,8 @@ public class VNPayService {
     @Value("${sportshop.vnpay.hash-secret}")
     private String secretKey;
 
+    @Autowired
+    private OrderRepository orderRepository;
 
     public String hmacSHA512(final String key, final String data) {
         try {
@@ -126,5 +130,8 @@ public class VNPayService {
         query.append("&vnp_SecureHash=").append(vnp_SecureHash);
 
         return this.vnp_PayUrl + "?" + query;
+    }
+    public void updateStatus(String orderCode){
+        this.orderRepository.markAsPaid(orderCode);
     }
 }

@@ -102,7 +102,7 @@ public class ClientOrderController {
     @PostMapping("/create")
     public String createOrder(
             @ModelAttribute("bill") @Valid InformationDTO informationDTO,
-            // BindingResult orderBindingResult,
+            // BindingResult orderBindingResult
             @RequestParam("payment") Optional<String> payment,
             HttpServletRequest http,
             @RequestParam("checkoutToken") String token) throws Exception {
@@ -117,7 +117,7 @@ public class ClientOrderController {
         // if (orderBindingResult.hasErrors()) {
         // return "client/cart/checkout";
         // }
-
+        System.out.println(informationDTO.getEmail());
         HttpSession session = http.getSession(false);
         String sessionToken = (String) session.getAttribute("checkoutToken");
         if (sessionToken == null || !sessionToken.equals(token)) {
@@ -128,9 +128,6 @@ public class ClientOrderController {
         final String uuid = UUID.randomUUID().toString().replace("-", "");
         informationDTO.setPaymentRef(uuid);
         if (!informationDTO.getPayment().equals("CASH")) {
-            String ip = this.vNPayService.getIpAddress(http);
-            String vnpUrl = this.vNPayService.generateVNPayURL(informationDTO.getTotalPrice(),
-                    informationDTO.getPaymentRef(), ip);
             Integer userId = (Integer) session.getAttribute("id");
             if (informationDTO.getVoucherCode() == null || informationDTO.getVoucherCode().isEmpty()
                     || informationDTO.getVoucherCode().isBlank()) {
@@ -138,7 +135,7 @@ public class ClientOrderController {
             }
             try {
                 Order order = this.orderService.createOrder(userId, informationDTO.getVoucherCode(), informationDTO);
-                return "redirect:" + vnpUrl;
+                return "redirect:/order/payment?total=" +order.getTotalAmount()+"&orderCode="+order.getPaymentRef() ;
             } catch (Exception e) {
                 return "redirect:/cart?error=not_enough_quantity";
             }
@@ -215,5 +212,24 @@ public class ClientOrderController {
     public String acceptOrderStatus(@PathVariable("id") Integer id) {
         this.orderService.updateOrderStatus(id, OrderStatus.accept);
         return "redirect:/order/accept";
+    }
+    @GetMapping("/payment")
+    public String paymentPage(Model model,
+                              @RequestParam("total") Long total,
+                              @RequestParam("orderCode") String orderCode) {
+        model.addAttribute("totalAmount", total);
+        model.addAttribute("orderCode", orderCode);
+        return "client/order/payment";
+    }
+    @GetMapping("/payment/check")
+    public String check(@RequestParam("totalAmount") Long total,
+                        @RequestParam("orderCode") String orderCode){
+        try{
+            this.vNPayService.updateStatus((orderCode));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        this.vNPayService.updateStatus(orderCode);
+        return "redirect:/order/confirmation";
     }
 }

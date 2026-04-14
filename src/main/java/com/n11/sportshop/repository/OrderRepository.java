@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.n11.sportshop.domain.Order;
 import com.n11.sportshop.domain.OrderStatus;
 import com.n11.sportshop.domain.User;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order,Integer>{
@@ -28,5 +30,9 @@ public interface OrderRepository extends JpaRepository<Order,Integer>{
         WHERE o.status = com.n11.sportshop.domain.OrderStatus.accept
         """)
     Long getTotalSales();
-
+    @Modifying
+    @Transactional
+    @Query("UPDATE Order o SET o.paymentStatus = com.n11.sportshop.domain.PaymentStatus.PAID "
+            + "WHERE o.paymentRef = :orderCode")
+    int markAsPaid(@Param("orderCode") String orderCode);
 }
