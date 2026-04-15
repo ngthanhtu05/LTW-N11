@@ -50,6 +50,16 @@
 										<button type="submit" value="submit" class="primary-btn">Log In</button>
 
 									</div>
+									<div class="col-md-12 form-group">
+                                        <a href="/oauth2/authorization/google" class="primary-btn"
+                                           style="background: #4285f4;
+                                                         margin-top: 10px;
+                                                         display: inline-block;
+                                                         color:white;
+                                                  ">
+                                            Login with Google
+                                        </a>
+                                    </div>
 								</form>
 							</div>
 						</div>

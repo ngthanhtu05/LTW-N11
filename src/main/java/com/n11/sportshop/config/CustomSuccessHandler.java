@@ -12,7 +12,8 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.core.userdetails.UserDetails;
 import com.n11.sportshop.domain.User;
 import com.n11.sportshop.service.UserService;
 
@@ -31,10 +32,9 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         Map<String, String> roleTargetUrlMap = new HashMap<>();
         roleTargetUrlMap.put("ROLE_USER", "/");
         roleTargetUrlMap.put("ROLE_ADMIN", "/admin");
-        /* Phân quyền */
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        /* Lấy ra các quyền mà user có sau khi login thành công */
+
         for (final GrantedAuthority grantedAuthority : authorities) {
             String authorityName = grantedAuthority.getAuthority();
 
@@ -43,7 +43,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
             }
         }
 
-        throw new IllegalStateException();
+        return "/";
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, Authentication authentication) {
@@ -51,25 +51,36 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         if (session == null) {
             return;
         }
-        session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-        /* Xóa đi lỗi đăng nhập nếu trước đó người dùng login không thành công */
 
-        String username = authentication.getName(); // Bug tại đây
-        User user = this.userService.getUserByUsername(username);
+        session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+
+        Object principal = authentication.getPrincipal();
+
+        String email = null;
+
+        // 👉 Login Google
+        if (principal instanceof OAuth2User) {
+            OAuth2User oauthUser = (OAuth2User) principal;
+            email = oauthUser.getAttribute("email");
+            System.out.println("Login Google: " + email);
+        }
+
+        // 👉 Login thường
+        else if (principal instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) principal;
+            email = userDetails.getUsername();
+            System.out.println("Login thường: " + email);
+        }
+
+        if (email == null) return;
+
+        User user = this.userService.getUserByUsername(email);
 
         if (user != null) {
             session.setAttribute("fullName", user.getFullName());
             session.setAttribute("id", user.getId());
             session.setAttribute("email", user.getEmail());
-            // int sum = user.getCart() == null ? 0 : user.getCart().getSum();
             session.setAttribute("avatar", user.getImage());
-            // session.setAttribute("sum", sum);
-
-            /*
-             * Ở Front-end lấy ra thông tin từ session :
-             * <p>Xin chào, ${sessionScope.fullName}</p>
-             * <p>Email: ${sessionScope.email}</p>
-             */
         }
     }
 
