@@ -12,16 +12,14 @@ import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
 @EnableWebMvc
-// Bật cấu hình MVC nhưng phải tự config lại đường dẫn để Spring đọc file
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     ViewResolver viewResolver() {
         final InternalResourceViewResolver bean = new InternalResourceViewResolver();
         bean.setViewClass(JstlView.class);
-        bean.setPrefix("/WEB-INF/view/"); // Tự động gán tiền tố
-        bean.setSuffix(".jsp"); // Tự động gán hậu tố
-        // Ví dụ : return "hello" -> /WEB-INF/view/hello.jsp
+        bean.setPrefix("/WEB-INF/view/");
+        bean.setSuffix(".jsp");
         return bean;
     }
 
@@ -38,6 +36,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/images/**").addResourceLocations("/resources/images/");
         registry.addResourceHandler("/client/**").addResourceLocations("/resources/client/");
         registry.addResourceHandler("/admin/**").addResourceLocations("/resources/admin/");
-        // Nếu tiền tố là client thì sẽ tự động tìm trong resources
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/swagger-ui/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/");
     }
 }
