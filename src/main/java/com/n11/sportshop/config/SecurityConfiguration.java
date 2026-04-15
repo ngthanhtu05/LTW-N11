@@ -86,6 +86,10 @@ public class SecurityConfiguration {
                 .failureUrl("/login?error")
                 .successHandler(customSuccessHandler())
                 .permitAll())
+                .oauth2Login(oauth -> oauth
+                        .loginPage("/login")
+                        .successHandler(customSuccessHandler())
+                )
                 .exceptionHandling(ex -> ex.accessDeniedPage("/access-deny"));
         return http.build();
     }
