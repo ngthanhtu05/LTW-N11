@@ -41,7 +41,7 @@
 
     <!-- QR -->
     <img
-        src="https://img.vietqr.io/image/<idbank>-<tknganhang>-compact.png?amount=5000&addInfo=${orderCode}&accountName=SPORTSHOP"
+        src="https://img.vietqr.io/image/970422-0975734995-compact.png?amount=5000&addInfo=${orderCode}&accountName=SPORTSHOP"
     />
 
     <p>Mã đơn: <b>${orderCode}</b></p>
@@ -58,7 +58,7 @@ async function checkPayment() {
     try {
         const res = await fetch("https://oauth.casso.vn/v2/transactions", {
             headers: {
-                Authorization: `Apikey apikey`,
+                Authorization: `Apikey AK_CS.74132b7037f311f1a3ca79c2f1d864cb.iPcIQgHF73EtoKOwN5zkg7R2g1ztAqYrDD4n2f2t8qjqB2viNpgKKmTXwofx6uNv1XMFoeNY`,
                 "Content-Type": "application/json",
             },
         });
