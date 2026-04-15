@@ -35,7 +35,7 @@ public class SecurityConfiguration {
 
     @Bean
     public DaoAuthenticationProvider authProvider(PasswordEncoder passwordEncoder,
-            UserDetailsService userDetailsService) {
+                                                  UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
@@ -65,27 +65,27 @@ public class SecurityConfiguration {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                .dispatcherTypeMatchers(DispatcherType.FORWARD,
-                        DispatcherType.INCLUDE)
-                .permitAll()
-                .requestMatchers("/", "/login", "/client/**", "/css/**", "/js/**", "/product/**",
-                        "/register", "/images/**", "/home", "/products/**")
-                .permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated())
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD,
+                                DispatcherType.INCLUDE)
+                        .permitAll()
+                        .requestMatchers("/", "/login", "/client/**", "/css/**", "/js/**", "/product/**",
+                                "/register", "/images/**", "/home", "/products/**")
+                        .permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
                 .sessionManagement((sessionManagement) -> sessionManagement
-                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-                .invalidSessionUrl("/logout?expired")
-                .maximumSessions(1) // Giới hạn session
-                .maxSessionsPreventsLogin(false)) // Không ngăn chặn logic nhưng sẽ đá người trước ra
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                        .invalidSessionUrl("/logout?expired")
+                        .maximumSessions(1) // Giới hạn session
+                        .maxSessionsPreventsLogin(false)) // Không ngăn chặn logic nhưng sẽ đá người trước ra
 
                 .logout(logout -> logout.deleteCookies("JSESSIONID").invalidateHttpSession(true))
                 .rememberMe(r -> r.rememberMeServices(rememberMeServices()))
                 .formLogin(formLogin -> formLogin
-                .loginPage("/login")
-                .failureUrl("/login?error")
-                .successHandler(customSuccessHandler())
-                .permitAll())
+                        .loginPage("/login")
+                        .failureUrl("/login?error")
+                        .successHandler(customSuccessHandler())
+                        .permitAll())
                 .oauth2Login(oauth -> oauth
                         .loginPage("/login")
                         .successHandler(customSuccessHandler())
