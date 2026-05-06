@@ -1,11 +1,9 @@
 package com.n11.sportshop.config;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +15,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import com.n11.sportshop.domain.User;
 import com.n11.sportshop.domain.dto.RegisterDTO;
+import com.n11.sportshop.service.AuthSessionService;
 import com.n11.sportshop.service.UserService;
 
 import jakarta.servlet.ServletException;
@@ -26,8 +25,14 @@ import jakarta.servlet.http.HttpSession;
 
 public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final AuthSessionService authSessionService;
+
+    public CustomSuccessHandler(UserService userService,
+            AuthSessionService authSessionService) {
+        this.userService = userService;
+        this.authSessionService = authSessionService;
+    }
 
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
@@ -56,14 +61,12 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
         String email = null;
         String name = null;
-        String avatar = null;
         boolean isGoogle = false;
 
         // ===== GOOGLE LOGIN =====
         if (principal instanceof OAuth2User oauth) {
             email = oauth.getAttribute("email");
             name = oauth.getAttribute("name");
-            avatar = oauth.getAttribute("picture");
             isGoogle = true;
         }
 
@@ -99,10 +102,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
         if (user == null) return;
 
-        session.setAttribute("fullName", user.getFullName());
-        session.setAttribute("id", user.getId());
-        session.setAttribute("email", user.getEmail());
-        session.setAttribute("avatar", user.getImage());
+        authSessionService.applyUserSession(session, user);
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.n11.sportshop.domain.User;
+import com.n11.sportshop.service.AuthSessionService;
 import com.n11.sportshop.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
@@ -20,9 +21,11 @@ import jakarta.servlet.http.HttpSession;
 public class ClientAccountController {
 
     private final UserService userService;
+    private final AuthSessionService authSessionService;
 
-    public ClientAccountController(UserService userService) {
+    public ClientAccountController(UserService userService, AuthSessionService authSessionService) {
         this.userService = userService;
+        this.authSessionService = authSessionService;
     }
 
     @GetMapping("/profile")
@@ -79,8 +82,7 @@ public class ClientAccountController {
         }
 
         User updateUser = this.userService.updateUser(user, file);
-        session.setAttribute("fullName", updateUser.getFullName());
-        session.setAttribute("avatar", updateUser.getImage());
+        authSessionService.applyUserSession(session, updateUser);
         return "redirect:/profile";
     }
 }
