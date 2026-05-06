@@ -77,7 +77,7 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated())
                 .sessionManagement((sessionManagement) -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-                        .invalidSessionUrl("/logout?expired")
+                        .invalidSessionUrl("/login?expired")
                         .maximumSessions(1) // Giới hạn session
                         .maxSessionsPreventsLogin(false)) // Không ngăn chặn logic nhưng sẽ đá người trước ra
 

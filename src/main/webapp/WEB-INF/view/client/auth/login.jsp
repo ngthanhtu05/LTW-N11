@@ -30,6 +30,14 @@
 										</div>
 									</div>
 								</c:if>
+								<c:if test="${param.expired != null}">
+									<div class="col-md-12 form-group">
+										<div>
+											<strong>Phiên đăng nhập đã hết hạn.</strong> Vui lòng đăng nhập lại.
+										</div>
+									</div>
+								</c:if>
+
 								<c:if test="${param.error != null}">
 									<div class="col-md-12 form-group">
 										<div>

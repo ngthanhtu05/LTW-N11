@@ -1,8 +1,6 @@
 package com.n11.sportshop.config;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,15 +36,18 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
     protected String determineTargetUrl(Authentication authentication) {
 
-        Map<String, String> map = new HashMap<>();
-        map.put("ROLE_USER", "/");
-        map.put("ROLE_ADMIN", "/admin");
-
         for (GrantedAuthority auth : authentication.getAuthorities()) {
-            if (map.containsKey(auth.getAuthority())) {
-                return map.get(auth.getAuthority());
+            if ("ROLE_ADMIN".equals(auth.getAuthority())) {
+                return "/admin";
             }
         }
+
+        for (GrantedAuthority auth : authentication.getAuthorities()) {
+            if ("ROLE_USER".equals(auth.getAuthority())) {
+                return "/";
+            }
+        }
+
         return "/";
     }
 
