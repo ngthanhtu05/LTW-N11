@@ -37,6 +37,7 @@
 										</div>
 									</div>
 								</c:if>
+
 								<c:if test="${param.error != null}">
 									<div class="col-md-12 form-group">
 										<div>
