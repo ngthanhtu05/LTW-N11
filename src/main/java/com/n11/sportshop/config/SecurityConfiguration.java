@@ -64,15 +64,15 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http,
+                                    AuthenticationSuccessHandler customSuccessHandler) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.FORWARD,
                                 DispatcherType.INCLUDE)
                         .permitAll()
                         .requestMatchers("/", "/login", "/client/**", "/css/**", "/js/**", "/product/**",
-                                "/register", "/images/**", "/home", "/products/**", "/api/**",
-                                "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/webjars/**")
+                                "/register", "/images/**", "/home", "/products/**", "/api/**")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
@@ -92,11 +92,11 @@ public class SecurityConfiguration {
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .failureUrl("/login?error")
-                        .successHandler(customSuccessHandler())
+                        .successHandler(customSuccessHandler)
                         .permitAll())
                 .oauth2Login(oauth -> oauth
                         .loginPage("/login")
-                        .successHandler(customSuccessHandler())
+                        .successHandler(customSuccessHandler)
                 )
                 .exceptionHandling(ex -> ex.accessDeniedPage("/access-deny"));
         return http.build();

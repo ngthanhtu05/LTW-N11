@@ -13,14 +13,8 @@ import com.n11.sportshop.domain.Category;
 import com.n11.sportshop.domain.Product;
 import com.n11.sportshop.service.ProductService;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
 @RestController
 @RequestMapping("/api/products")
-@Tag(name = "Product REST API", description = "API lấy dữ liệu sản phẩm ở dạng JSON")
 public class ProductApiController {
 
     private final ProductService productService;
@@ -30,10 +24,6 @@ public class ProductApiController {
     }
 
     @GetMapping
-    @Operation(
-            summary = "Lấy danh sách sản phẩm",
-            description = "Trả về danh sách tất cả sản phẩm hiện có.")
-    @ApiResponse(responseCode = "200", description = "Lấy danh sách sản phẩm thành công")
     public List<ProductResponse> getAllProducts() {
         return this.productService.getAllProducts()
                 .stream()
@@ -42,11 +32,6 @@ public class ProductApiController {
     }
 
     @GetMapping("/{id}")
-    @Operation(
-            summary = "Lấy chi tiết sản phẩm theo ID",
-            description = "Trả về thông tin chi tiết của một sản phẩm.")
-    @ApiResponse(responseCode = "200", description = "Tìm thấy sản phẩm")
-    @ApiResponse(responseCode = "404", description = "Không tìm thấy sản phẩm")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable("id") int id) {
         return this.productService.getProductById(id)
                 .map(this::toResponse)
@@ -91,27 +76,27 @@ public class ProductApiController {
     }
 
     public record ProductResponse(
-            @Schema(example = "1") int id,
-            @Schema(example = "Nike Air Zoom") String name,
-            @Schema(example = "Giày chạy bộ chuyên dụng") String description,
-            @Schema(example = "2499000") Long price,
-            @Schema(example = "12") int stockQuantity,
-            @Schema(example = "SHO50.jpg") String image,
-            @Schema(example = "1") Integer status,
+            int id,
+            String name,
+            String description,
+            Long price,
+            int stockQuantity,
+            String image,
+            Integer status,
             CategorySummary category,
             BrandSummary brand) {
     }
 
     public record CategorySummary(
-            @Schema(example = "2") int id,
-            @Schema(example = "SHO") String code,
-            @Schema(example = "Shoes") String name,
-            @Schema(example = "1") Integer status) {
+            int id,
+            String code,
+            String name,
+            Integer status) {
     }
 
     public record BrandSummary(
-            @Schema(example = "3") int id,
-            @Schema(example = "Nike") String name,
-            @Schema(example = "1") Integer status) {
+            int id,
+            String name,
+            Integer status) {
     }
 }
