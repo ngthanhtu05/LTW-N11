@@ -163,8 +163,8 @@ Nếu chỉ cần build nhanh và bỏ qua test:
 2. Product form thêm item vào giỏ tại `/products/add-product-to-cart/{id}`.
 3. Checkout tại `/cart/checkout` tạo `checkoutToken` một lần.
 4. `/order/create` tạo đơn, khóa stock sản phẩm và áp dụng voucher nếu có.
-5. Đơn CASH chuyển đến confirmation; đơn VNPay đi qua payment page và return
-   URL.
+5. Đơn CASH chuyển đến confirmation; đơn VNPay redirect sang VNPay và quay về
+   return URL.
 
 ### Admin
 

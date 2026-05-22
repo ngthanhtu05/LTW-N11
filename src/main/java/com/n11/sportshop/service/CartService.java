@@ -57,7 +57,7 @@ public class CartService {
     }
 
     public void updateCart (User user, Integer productId, Integer quantity) {
-        Cart cart = this.cartRepo.findByUserAndStatus(user, "ACTIVE").get();
+        Cart cart = getActiveCart(user);
         Product product = this.productRepo.findById(productId).get();
         CartDetail cartDetail = this.cartDetailRepo.findByCartAndProduct(cart, product);
         cartDetail.setQuantity(quantity);

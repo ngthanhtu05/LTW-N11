@@ -62,6 +62,7 @@ public class ClientCartController {
             } else if (quantity > stock) {
                 // số lượng trong giỏ vượt quá stock -> giảm xuống tối đa
                 item.setQuantity(stock);
+                quantity = stock;
                 errors.put(item.getProduct().getId(), "Chỉ còn " + stock + " sản phẩm");
             }
             totalPrice = totalPrice + (price * quantity);

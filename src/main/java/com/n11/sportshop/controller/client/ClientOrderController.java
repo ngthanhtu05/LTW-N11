@@ -18,7 +18,6 @@ import com.n11.sportshop.domain.Cart;
 import com.n11.sportshop.domain.Order;
 import com.n11.sportshop.domain.OrderDetail;
 import com.n11.sportshop.domain.OrderStatus;
-import com.n11.sportshop.domain.PaymentStatus;
 import com.n11.sportshop.domain.Product;
 import com.n11.sportshop.domain.User;
 import com.n11.sportshop.domain.dto.InformationDTO;
@@ -135,7 +134,15 @@ public class ClientOrderController {
             }
             try {
                 Order order = this.orderService.createOrder(userId, informationDTO.getVoucherCode(), informationDTO);
-                return "redirect:/order/payment?total=" +order.getTotalAmount()+"&orderCode="+order.getPaymentRef() ;
+                Long totalAmount = order.getTotalAmount() + order.getShipPrice() - order.getDiscountAmount();
+                if (totalAmount < 0) {
+                    totalAmount = 0L;
+                }
+                String paymentUrl = this.vNPayService.generateVNPayURL(
+                        totalAmount,
+                        order.getPaymentRef(),
+                        this.vNPayService.getIpAddress(http));
+                return "redirect:" + paymentUrl;
             } catch (Exception e) {
                 return "redirect:/cart?error=not_enough_quantity";
             }
@@ -157,14 +164,18 @@ public class ClientOrderController {
     @GetMapping("/payment-return")
     public String paymentReturn(
             @RequestParam("vnp_ResponseCode") Optional<String> vnpayResponseCode,
-            @RequestParam("vnp_TxnRef") Optional<String> paymentRef,
-            Model model) {
-        String responseCode = vnpayResponseCode.get();
+            @RequestParam("vnp_TxnRef") Optional<String> paymentRef) {
+        if (vnpayResponseCode.isEmpty() || paymentRef.isEmpty()) {
+            return "redirect:/cart?error=invalid_payment_return";
+        }
 
         Order order = orderService.getOrderByPaymentRef(paymentRef.get());
+        if (order == null) {
+            return "redirect:/cart?error=invalid_payment_return";
+        }
 
-        if ("00".equals(responseCode)) {
-            order.setPaymentStatus(PaymentStatus.PAID);
+        if ("00".equals(vnpayResponseCode.get())) {
+            this.vNPayService.updateStatus(order.getPaymentRef());
         } else {
             for (var item : order.getOrderDetails()) {
                 Product product = this.productService.getProductById(item.getProduct().getId()).get();
@@ -212,24 +223,5 @@ public class ClientOrderController {
     public String acceptOrderStatus(@PathVariable("id") Integer id) {
         this.orderService.updateOrderStatus(id, OrderStatus.accept);
         return "redirect:/order/accept";
-    }
-    @GetMapping("/payment")
-    public String paymentPage(Model model,
-                              @RequestParam("total") Long total,
-                              @RequestParam("orderCode") String orderCode) {
-        model.addAttribute("totalAmount", total);
-        model.addAttribute("orderCode", orderCode);
-        return "client/order/payment";
-    }
-    @GetMapping("/payment/check")
-    public String check(@RequestParam("totalAmount") Long total,
-                        @RequestParam("orderCode") String orderCode){
-        try{
-            this.vNPayService.updateStatus((orderCode));
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        this.vNPayService.updateStatus(orderCode);
-        return "redirect:/order/confirmation";
     }
 }
