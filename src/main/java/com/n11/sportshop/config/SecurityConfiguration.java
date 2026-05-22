@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
 
+import com.n11.sportshop.service.AuthSessionService;
 import com.n11.sportshop.service.CustomUserDetailsService;
 import com.n11.sportshop.service.UserService;
 
@@ -49,8 +50,9 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationSuccessHandler customSuccessHandler() {
-        return new CustomSuccessHandler();
+    public AuthenticationSuccessHandler customSuccessHandler(UserService userService,
+            AuthSessionService authSessionService) {
+        return new CustomSuccessHandler(userService, authSessionService);
     }
 
     // Chức năng ghi nhớ đăng nhập
@@ -76,11 +78,16 @@ public class SecurityConfiguration {
                         .anyRequest().authenticated())
                 .sessionManagement((sessionManagement) -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-                        .invalidSessionUrl("/logout?expired")
+                        .invalidSessionUrl("/login?expired")
                         .maximumSessions(1) // Giới hạn session
                         .maxSessionsPreventsLogin(false)) // Không ngăn chặn logic nhưng sẽ đá người trước ra
 
-                .logout(logout -> logout.deleteCookies("JSESSIONID").invalidateHttpSession(true))
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .deleteCookies("JSESSIONID")
+                        .invalidateHttpSession(true)
+                        .logoutSuccessUrl("/login?logout")
+                        .clearAuthentication(true))
                 .rememberMe(r -> r.rememberMeServices(rememberMeServices()))
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")

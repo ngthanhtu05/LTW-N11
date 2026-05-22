@@ -22,6 +22,22 @@
 						<div class="col-lg-6">
 							<div class="login_form_inner">
 								<h3>Log in to enter</h3>
+
+								<c:if test="${param.logout != null}">
+									<div class="col-md-12 form-group">
+										<div>
+											<strong>Đăng xuất thành công!</strong>
+										</div>
+									</div>
+								</c:if>
+								<c:if test="${param.expired != null}">
+									<div class="col-md-12 form-group">
+										<div>
+											<strong>Phiên đăng nhập đã hết hạn.</strong> Vui lòng đăng nhập lại.
+										</div>
+									</div>
+								</c:if>
+
 								<c:if test="${param.error != null}">
 									<div class="col-md-12 form-group">
 										<div>
